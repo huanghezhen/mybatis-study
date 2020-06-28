@@ -1,7 +1,6 @@
 package hhz.demo1.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
 
 /**
  * @ClassName: MyMapper
@@ -11,6 +10,5 @@ import org.apache.ibatis.annotations.Select;
  */
 @Mapper
 public interface MyMapper {
-    @Select("select count(*) from user")
     int count();
 }
