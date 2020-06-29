@@ -1,7 +1,6 @@
 package hhz.demo2;
 
-import hhz.demo2.mapper.BlogMapper;
-import hhz.demo2.model.Blog;
+import hhz.demo2.mapper.MyMapper;
 import org.apache.ibatis.datasource.pooled.PooledDataSourceFactory;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
@@ -24,8 +23,8 @@ public class Test01 {
     public static void main(String[] args) {
         PooledDataSourceFactory pooledDataSource = new PooledDataSourceFactory();
         Properties properties = new Properties();
-        properties.setProperty("driver", "com.mysql.jdbc.Driver");
-        properties.setProperty("url", "jdbc:mysql://192.168.2.11:3306/bud_test?useUnicode=true&characterEncoding=utf-8&useSSL=false");
+        properties.setProperty("driver", "com.mysql.cj.jdbc.Driver");
+        properties.setProperty("url", "jdbc:mysql://192.168.2.11:3306/mybatis?useUnicode=true&characterEncoding=utf-8&useSSL=false");
         properties.setProperty("username", "root");
         properties.setProperty("password", "123456");
         pooledDataSource.setProperties(properties);
@@ -34,11 +33,12 @@ public class Test01 {
         TransactionFactory transactionFactory = new JdbcTransactionFactory();
         Environment environment = new Environment("development", transactionFactory, dataSource);
         Configuration configuration = new Configuration(environment);
-        configuration.addMapper(BlogMapper.class);
+        configuration.addMapper(MyMapper.class);
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
-        SqlSession sqlSession = sqlSessionFactory.openSession();
-        BlogMapper mapper = sqlSession.getMapper(BlogMapper.class);
-        Blog blog = mapper.selectBlog(1);
-        System.out.println(blog);
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            MyMapper mapper = session.getMapper(MyMapper.class);
+            int count = mapper.count();
+            System.out.println(count);
+        }
     }
 }
